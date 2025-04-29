@@ -1,0 +1,47 @@
+services:
+  directus_db:
+    image: postgis/postgis:13-master
+    platform: linux/amd64
+    volumes:
+      - ./data/database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "directus"
+      POSTGRES_PASSWORD: "directus"
+      POSTGRES_DB: "directus"
+    healthcheck:
+      test: ["CMD", "pg_isready", "--host=localhost", "--username=directus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  directus:
+    image: directus/directus:11.5.1
+    ports:
+      - 8055:8055
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+    environment:
+      # Database Config
+      DB_CLIENT: "pg"
+      DB_HOST: "directus_db"
+      DB_PORT: "5432"
+      DB_DATABASE: "directus"
+      DB_USER: "directus"
+      DB_PASSWORD: "directus"
+
+      # Directus Config
+      SECRET: "secret"
+      ADMIN_EMAIL: "admin@lmu-dev.org"
+      ADMIN_PASSWORD: "directus"
+      
+      # could be nice in future
+      WEBSOCKETS_ENABLED: "true"
+      
+      # Cache Config (using memory for simplicity)
+      CACHE_ENABLED: "true"
+      CACHE_STORE: "memory"
+    depends_on:
+      directus_db:
+        condition: service_healthy 

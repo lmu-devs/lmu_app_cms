@@ -1,0 +1,22 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Directus specific
+/data/database/*
+!/data/database/.gitkeep
+/uploads/*
+!/uploads/.gitkeep
+/extensions/*
+!/extensions/.gitkeep
+
+# Dependencies
+/node_modules
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db 
