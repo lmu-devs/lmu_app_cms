@@ -11,7 +11,7 @@ Content Management System for the LMU App, powered by [Directus](https://directu
 
 1. Clone the repository:
 ```bash
-git clone [your-repository-url]
+git clone https://github.com/lmu-devs/lmu_app_cms.git
 cd lmu_app_cms
 ```
 
