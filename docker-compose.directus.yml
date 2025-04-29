@@ -5,11 +5,11 @@ services:
     volumes:
       - ./data/database:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: "directus"
-      POSTGRES_PASSWORD: "directus"
-      POSTGRES_DB: "directus"
+      POSTGRES_USER: ${DB_USER:-directus}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-directus}
+      POSTGRES_DB: ${DB_DATABASE:-directus}
     healthcheck:
-      test: ["CMD", "pg_isready", "--host=localhost", "--username=directus"]
+      test: ["CMD", "pg_isready", "--host=localhost", "--username=${DB_USER:-directus}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -18,7 +18,7 @@ services:
   directus:
     image: directus/directus:11.5.1
     ports:
-      - 8055:8055
+      - ${PORT:-8055}:8055
     volumes:
       - ./uploads:/directus/uploads
       - ./extensions:/directus/extensions
@@ -27,14 +27,16 @@ services:
       DB_CLIENT: "pg"
       DB_HOST: "directus_db"
       DB_PORT: "5432"
-      DB_DATABASE: "directus"
-      DB_USER: "directus"
-      DB_PASSWORD: "directus"
+      DB_DATABASE: ${DB_DATABASE:-directus}
+      DB_USER: ${DB_USER:-directus}
+      DB_PASSWORD: ${DB_PASSWORD:-directus}
 
       # Directus Config
-      SECRET: "secret"
-      ADMIN_EMAIL: "admin@lmu-dev.org"
-      ADMIN_PASSWORD: "directus"
+      KEY: ${DIRECTUS_KEY:-change-me}
+      SECRET: ${DIRECTUS_SECRET:-change-me}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD:-directus}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL:-http://localhost:8055}
       
       # could be nice in future
       WEBSOCKETS_ENABLED: "true"
