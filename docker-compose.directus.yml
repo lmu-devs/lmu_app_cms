@@ -1,6 +1,6 @@
 services:
   directus_db:
-    image: postgis/postgis:13-master
+    image: postgres:16.4-bookworm
     platform: linux/amd64
     volumes:
       - ./data/database:/var/lib/postgresql/data
