@@ -40,3 +40,15 @@ The CMS will be available at `http://localhost:8055`
 ## Development
 
 The CMS is built on Directus 11.5.1 and uses PostgreSQL with PostGIS support for the database.
+
+## Extensions
+
+Directus is a highly extensible open-source platform that can be customized in various ways. The platform is built with Vue.js 3, allowing developers to create custom extensions using Vue.js components and the Directus Extension SDK. You can learn more about creating extensions in the [official documentation](https://docs.directus.io/extensions/creating-extensions.html).
+
+When developing extensions, you can utilize Directus' comprehensive UI component library. These components are documented and showcased in the [Directus UI Components Library](https://components.directus.io/), which serves as a valuable resource for maintaining consistency with the Directus interface.
+
+### Custom Extensions
+
+#### Link with Favicon Interface
+
+Our repository includes a custom interface extension called "Link with Favicon". This interface extension saves both a link and a favicon url. It also allows you to generate a favicon url from a link. And displays a preview of the favicon for users to check.
