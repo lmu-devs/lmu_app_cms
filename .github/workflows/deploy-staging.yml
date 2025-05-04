@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: ./dockerfile
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
@@ -60,15 +61,18 @@ jobs:
           # Clean up dangling images before deployment
           ssh ${{ secrets.USER }}@${{ vars.HOST }} "docker image prune -f"
 
-          # Copy compose files
-          scp compose.staging.yml ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/compose.yml
+          # Copy compose and env files
+          scp compose.yml ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/compose.yml
+          scp .env.staging ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/.env
 
           # Deploy using Docker Compose with the custom image
           ssh ${{ secrets.USER }}@${{ vars.HOST }} "cd ${{ vars.APP_PATH }} && \
           echo 'Pulling latest images...' && \
+          export ENVIRONMENT=staging && \
+          export DOCKER_USERNAME=${{ vars.DOCKER_USERNAME }} && \
           docker compose pull && \
           echo 'Bringing up services...' && \
-          docker compose up -d --force-recreate"
+          docker compose up -d --force-recreate db directus"
 
       - name: Notify deployment success
         if: success()

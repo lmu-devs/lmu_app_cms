@@ -9,19 +9,32 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-directus}
       POSTGRES_DB: ${POSTGRES_DB:-directus}
     healthcheck:
-      test: ["CMD", "pg_isready", "--host=localhost", "--username=${DB_USER:-directus}"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "--host=localhost",
+          "--username=${POSTGRES_USER:-directus}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    restart: unless-stopped
 
-  directus:
-    image: directus/directus:11.5.1
+  # Base directus service (not used directly)
+  directus_base:
+    image: ${DOCKER_USERNAME:-directus}/lmu-app-cms:${ENVIRONMENT:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_ENV: ${ENVIRONMENT:-development}
+        BUILD_DATE: ${BUILD_DATE:-local}
     ports:
       - ${PORT:-8055}:8055
     volumes:
       - ./uploads:/directus/uploads
-      - ./extensions:/directus/extensions
     environment:
       # Database Config
       DB_CLIENT: "pg"
@@ -29,21 +42,40 @@ services:
       DB_PORT: "5432"
       DB_DATABASE: ${POSTGRES_DB:-directus}
       DB_USER: ${POSTGRES_USER:-directus}
-      DB_PASSWORD: ${DB_PASSWORD:-directus}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-directus}
 
       # Directus Config
-      KEY: ${DIRECTUS_KEY:-change-me}
-      SECRET: ${DIRECTUS_SECRET:-change-me}
-      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL:-admin@example.com}
-      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD:-directus}
-      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL:-http://localhost:8055}
-      
+      KEY: ${DIRECTUS_KEY}
+      SECRET: ${DIRECTUS_SECRET}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: ${DIRECTUS_PUBLIC_URL}
+
       # could be nice in future
       WEBSOCKETS_ENABLED: "true"
-      
+
       # Cache Config (using memory for simplicity)
       CACHE_ENABLED: "true"
       CACHE_STORE: "memory"
+
+      # Set environment
+      NODE_ENV: ${ENVIRONMENT:-development}
     depends_on:
       db:
-        condition: service_healthy 
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Development environment (used by default)
+  directus_dev:
+    extends: directus_base
+    image: directus/directus:11.5.1 # Use official image for local dev
+    volumes:
+      - ./uploads:/directus/uploads
+      - ./extensions:/directus/extensions
+      - ./data/directus:/directus/data
+
+  # Staging/Production environment (used when ENVIRONMENT=staging or ENVIRONMENT=production)
+  directus:
+    extends: directus_base
+    profiles: ["staging", "production"]
+    # No need to override image as it will use the built one from directus_base
