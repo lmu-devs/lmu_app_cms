@@ -18,7 +18,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
       - name: Extract metadata for Docker
@@ -34,7 +34,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/lmu-app-cms:staging
+            ${{ vars.DOCKER_USERNAME }}/lmu-app-cms:staging
           build-args: |
             BUILD_ENV=staging
             BUILD_DATE=${{ steps.meta.outputs.build_date }}
@@ -49,35 +49,22 @@ jobs:
       - name: Add host key
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.HOST }} -T 60 >> ~/.ssh/known_hosts || echo "Failed to scan host key"
+          ssh-keyscan -H ${{ vars.HOST }} -T 60 >> ~/.ssh/known_hosts || echo "Failed to scan host key"
 
       - name: Deploy to staging server
         run: |
           echo "Deploying to staging server..."
           # Create deployment directory if it doesn't exist
-          ssh ${{ secrets.USER }}@${{ secrets.HOST }} "mkdir -p ${{ vars.APP_PATH }}"
+          ssh ${{ secrets.USER }}@${{ vars.HOST }} "mkdir -p ${{ vars.APP_PATH }}"
 
           # Clean up dangling images before deployment
-          ssh ${{ secrets.USER }}@${{ secrets.HOST }} "docker image prune -f"
+          ssh ${{ secrets.USER }}@${{ vars.HOST }} "docker image prune -f"
 
           # Copy compose files
-          scp compose.staging.yml ${{ secrets.USER }}@${{ secrets.HOST }}:${{ vars.APP_PATH }}/compose.yml
-
-          # Create or update .env file with environment variables
-          ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cat > ${{ vars.APP_PATH }}/.env << EOF
-          DB_USER=${{ secrets.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_DATABASE=${{ secrets.DB_DATABASE }}
-          DIRECTUS_KEY=${{ secrets.DIRECTUS_KEY }}
-          DIRECTUS_SECRET=${{ secrets.DIRECTUS_SECRET }}
-          DIRECTUS_ADMIN_EMAIL=${{ secrets.DIRECTUS_ADMIN_EMAIL }}
-          DIRECTUS_ADMIN_PASSWORD=${{ secrets.DIRECTUS_ADMIN_PASSWORD }}
-          DIRECTUS_PUBLIC_URL=${{ vars.DIRECTUS_PUBLIC_URL }}
-          DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}
-          EOF"
+          scp compose.staging.yml ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/compose.yml
 
           # Deploy using Docker Compose with the custom image
-          ssh ${{ secrets.USER }}@${{ secrets.HOST }} "cd ${{ vars.APP_PATH }} && \
+          ssh ${{ secrets.USER }}@${{ vars.HOST }} "cd ${{ vars.APP_PATH }} && \
           echo 'Pulling latest images...' && \
           docker compose pull && \
           echo 'Bringing up services...' && \
