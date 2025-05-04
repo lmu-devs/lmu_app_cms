@@ -1,13 +1,13 @@
 services:
-  directus_db:
+  db:
     image: postgres:16.4-bookworm
     platform: linux/amd64
     volumes:
       - ./data/database:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${DB_USER:-directus}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-directus}
-      POSTGRES_DB: ${DB_DATABASE:-directus}
+      POSTGRES_USER: ${POSTGRES_USER:-directus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-directus}
+      POSTGRES_DB: ${POSTGRES_DB:-directus}
     healthcheck:
       test: ["CMD", "pg_isready", "--host=localhost", "--username=${DB_USER:-directus}"]
       interval: 10s
@@ -25,10 +25,10 @@ services:
     environment:
       # Database Config
       DB_CLIENT: "pg"
-      DB_HOST: "directus_db"
+      DB_HOST: "db"
       DB_PORT: "5432"
-      DB_DATABASE: ${DB_DATABASE:-directus}
-      DB_USER: ${DB_USER:-directus}
+      DB_DATABASE: ${POSTGRES_DB:-directus}
+      DB_USER: ${POSTGRES_USER:-directus}
       DB_PASSWORD: ${DB_PASSWORD:-directus}
 
       # Directus Config
@@ -45,5 +45,5 @@ services:
       CACHE_ENABLED: "true"
       CACHE_STORE: "memory"
     depends_on:
-      directus_db:
+      db:
         condition: service_healthy 
