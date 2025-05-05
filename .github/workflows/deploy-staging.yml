@@ -63,7 +63,6 @@ jobs:
 
           # Copy compose and env files
           scp compose.yml ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/compose.yml
-          scp .env.staging ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/.env
 
           # Deploy using Docker Compose with the custom image
           ssh ${{ secrets.USER }}@${{ vars.HOST }} "cd ${{ vars.APP_PATH }} && \
