@@ -67,7 +67,7 @@ services:
     networks:
       - backend
       - frontend
-
+      - shared
   # Development environment (used by default)
   directus_dev:
     extends: directus_base
@@ -88,4 +88,5 @@ services:
 networks:
   backend:
   frontend:
+  shared:
     external: true
