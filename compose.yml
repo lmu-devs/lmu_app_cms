@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data/database:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-directus}
+      POSTGRES_USER: ${POSTGRES_USER:-lmu_admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-directus}
       POSTGRES_DB: ${POSTGRES_DB:-directus}
     healthcheck:
@@ -15,7 +15,7 @@ services:
           "CMD",
           "pg_isready",
           "--host=localhost",
-          "--username=${POSTGRES_USER:-directus}",
+          "--username=${POSTGRES_USER:-lmu_admin}",
         ]
       interval: 10s
       timeout: 5s
@@ -23,7 +23,7 @@ services:
       start_period: 30s
     restart: unless-stopped
     networks:
-      - cms_network
+      - backend
 
   # Base directus service (not used directly)
   directus_base:
@@ -44,7 +44,7 @@ services:
       DB_HOST: "db"
       DB_PORT: "5432"
       DB_DATABASE: ${POSTGRES_DB:-directus}
-      DB_USER: ${POSTGRES_USER:-directus}
+      DB_USER: ${POSTGRES_USER:-lmu_admin}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-directus}
 
       # Directus Config
@@ -68,7 +68,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     networks:
-      - cms_network
+      - backend
       - frontend
 
   # Development environment (used by default)
@@ -89,6 +89,6 @@ services:
     # No need to override image as it will use the built one from directus_base
 
 networks:
-  cms_network:
+  backend:
   frontend:
     external: true
