@@ -69,7 +69,7 @@ services:
     restart: unless-stopped
     networks:
       - cms_network
-      - lmu_app_frontend
+      - frontend
 
   # Development environment (used by default)
   directus_dev:
@@ -90,6 +90,5 @@ services:
 
 networks:
   cms_network:
-  lmu_app_frontend:
+  frontend:
     external: true
-    name: lmu_app_backend_frontend
