@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:16.4-bookworm
+    container_name: db_cms
     platform: linux/amd64
     volumes:
       - ./data/database:/var/lib/postgresql/data
@@ -69,6 +70,7 @@ services:
   directus_dev:
     extends: directus_base
     image: directus/directus:11.5.1 # Use official image for local dev
+    container_name: directus_dev
     volumes:
       - ./uploads:/directus/uploads
       - ./extensions:/directus/extensions
@@ -78,4 +80,5 @@ services:
   directus:
     extends: directus_base
     profiles: ["staging", "production"]
+    container_name: directus
     # No need to override image as it will use the built one from directus_base
