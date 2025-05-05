@@ -9,14 +9,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_HOST: ${POSTGRES_HOST}
     healthcheck:
       test:
-        [
-          "CMD",
-          "pg_isready",
-          "--host=localhost",
-          "--username=${POSTGRES_USER}",
-        ]
+        ["CMD", "pg_isready", "--host=localhost", "--username=${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -41,8 +38,8 @@ services:
     environment:
       # Database Config
       DB_CLIENT: "pg"
-      DB_HOST: "db"
-      DB_PORT: "5432"
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
       DB_DATABASE: ${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
