@@ -6,16 +6,16 @@ services:
     volumes:
       - ./data/database:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-lmu_admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-directus}
-      POSTGRES_DB: ${POSTGRES_DB:-directus}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
       test:
         [
           "CMD",
           "pg_isready",
           "--host=localhost",
-          "--username=${POSTGRES_USER:-lmu_admin}",
+          "--username=${POSTGRES_USER}",
         ]
       interval: 10s
       timeout: 5s
@@ -27,7 +27,7 @@ services:
 
   # Base directus service (not used directly)
   directus_base:
-    image: ${DOCKER_USERNAME:-directus}/lmu-app-cms:${ENVIRONMENT:-latest}
+    image: ${DOCKER_USERNAME}/lmu-app-cms:${ENVIRONMENT:-latest}
     build:
       context: .
       dockerfile: Dockerfile
@@ -43,9 +43,9 @@ services:
       DB_CLIENT: "pg"
       DB_HOST: "db"
       DB_PORT: "5432"
-      DB_DATABASE: ${POSTGRES_DB:-directus}
-      DB_USER: ${POSTGRES_USER:-lmu_admin}
-      DB_PASSWORD: ${POSTGRES_PASSWORD:-directus}
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
       # Directus Config
       KEY: ${DIRECTUS_KEY}
