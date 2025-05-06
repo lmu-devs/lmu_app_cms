@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgis/postgis:17-3.5-alpine⁠
+    image: postgis/postgis:17-3.5-alpine
     container_name: db_cms
     platform: linux/amd64
     volumes:
@@ -21,7 +21,6 @@ services:
     restart: unless-stopped
     networks:
       - backend
-
 
   cache:
     image: redis:6
@@ -81,7 +80,6 @@ services:
       - backend
       - frontend
       - shared
-
 
   # Development environment (used by default)
   directus_dev:
