@@ -24,6 +24,9 @@ services:
 
   cache:
     image: redis:6
+    container_name: cache
+    networks:
+      - backend
     healthcheck:
       test: ["CMD-SHELL", "[ $$(redis-cli ping) = 'PONG' ]"]
       interval: 10s
