@@ -29,7 +29,4 @@ RUN chown -R node:node /directus/uploads
 # Switch back to node user for running the application
 USER node
 
-# Don't copy data directory - this should be a volume in production/staging
-# COPY ./data /directus/data
-# Set proper ownership and permissions
-# RUN chown -R node:node /directus/extensions /directus/uploads
+RUN chown -R node:node /directus/extensions /directus/uploads

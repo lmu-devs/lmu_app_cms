@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:16.4-bookworm
+    image: postgis/postgis:17-3.5-alpine⁠
     container_name: db_cms
     platform: linux/amd64
     volumes:
@@ -22,9 +22,20 @@ services:
     networks:
       - backend
 
+
+  cache:
+    image: redis:6
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(redis-cli ping) = 'PONG' ]"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_interval: 5s
+      start_period: 30s
+
   # Base directus service (not used directly)
   directus_base:
-    image: ${DOCKER_USERNAME}/lmu-app-cms:${ENVIRONMENT:-latest}
+    image: ${DOCKER_USERNAME}/lmu-app-cms:${ENVIRONMENT}
     build:
       context: .
       dockerfile: Dockerfile
@@ -56,7 +67,9 @@ services:
 
       # Cache Config (using memory for simplicity)
       CACHE_ENABLED: "true"
-      CACHE_STORE: "memory"
+      CACHE_AUTO_PURGE: "true"
+      CACHE_STORE: "redis"
+      REDIS: "redis://cache:6379"
 
       # Set environment
       NODE_ENV: ${ENVIRONMENT:-development}
@@ -68,6 +81,8 @@ services:
       - backend
       - frontend
       - shared
+
+
   # Development environment (used by default)
   directus_dev:
     extends: directus_base
