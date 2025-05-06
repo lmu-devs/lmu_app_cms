@@ -24,7 +24,7 @@ COPY ./uploads /directus/uploads
 
 # Switch back to root to handle uploads permissions
 USER root
-RUN chown -R node:node /directus/uploads
+RUN mkdir -p /directus/uploads && chown -R node:node /directus/uploads && chmod -R 755 /directus/uploads
 
 # Switch back to node user for running the application
 USER node

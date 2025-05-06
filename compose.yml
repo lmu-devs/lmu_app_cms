@@ -13,7 +13,13 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
     healthcheck:
       test:
-        ["CMD", "pg_isready", "--host=localhost", "--username=${POSTGRES_USER}"]
+        [
+          "CMD",
+          "pg_isready",
+          "--host=localhost",
+          "--username=${POSTGRES_USER}",
+          "--dbname=${POSTGRES_DB}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -91,10 +97,13 @@ services:
     extends: directus_base
     image: directus/directus:11.5.1 # Use official image for local dev
     container_name: directus_dev
+    user: root # Run as root to avoid permission issues
     volumes:
       - ./uploads:/directus/uploads
       - ./extensions:/directus/extensions
       - ./data/directus:/directus/data
+    environment:
+      ASSETS_TRANSFORM_MAX_CONCURRENT: 4
 
   # Staging/Production environment (used when ENVIRONMENT=staging or ENVIRONMENT=production)
   directus:
