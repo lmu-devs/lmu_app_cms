@@ -72,6 +72,7 @@ services:
 
       # could be nice in future
       WEBSOCKETS_ENABLED: "true"
+      GRAPHQL_INTROSPECTION: "true"
 
       # Cache Config (using memory for simplicity)
       CACHE_ENABLED: "true"
@@ -95,15 +96,13 @@ services:
   # Development environment (used by default)
   directus_dev:
     extends: directus_base
-    image: directus/directus:11.5.1 # Use official image for local dev
+    image: directus/directus:11.5.1
     container_name: directus_dev
-    user: root # Run as root to avoid permission issues
+    user: root
     volumes:
       - ./uploads:/directus/uploads
       - ./extensions:/directus/extensions
       - ./data/directus:/directus/data
-    environment:
-      ASSETS_TRANSFORM_MAX_CONCURRENT: 4
 
   # Staging/Production environment (used when ENVIRONMENT=staging or ENVIRONMENT=production)
   directus:
