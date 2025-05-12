@@ -96,7 +96,7 @@ services:
   # Development environment (used by default)
   directus_dev:
     extends: directus_base
-    image: directus/directus:11.5.1
+    image: directus/directus:11.7.2
     container_name: directus_dev
     user: root
     volumes:
