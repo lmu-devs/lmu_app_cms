@@ -61,7 +61,7 @@ jobs:
           # Clean up dangling images before deployment
           ssh ${{ secrets.USER }}@${{ vars.HOST }} "docker image prune -f"
 
-          # Copy compose and env files
+          # Copy compose
           scp compose.yml ${{ secrets.USER }}@${{ vars.HOST }}:${{ vars.APP_PATH }}/compose.yml
 
           # Deploy using Docker Compose with the custom image
