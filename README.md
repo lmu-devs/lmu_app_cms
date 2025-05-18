@@ -10,17 +10,20 @@ Content Management System for the LMU App, powered by [Directus](https://directu
 ## Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/lmu-devs/lmu_app_cms.git
 cd lmu_app_cms
 ```
 
 2. Create your environment file:
+
 ```bash
 cp .env.example .env
 ```
 
 3. Start the CMS:
+
 ```bash
 docker-compose -f docker-compose.directus.yml up -d
 ```
@@ -51,4 +54,4 @@ When developing extensions, you can utilize Directus' comprehensive UI component
 
 #### Link with Favicon Interface
 
-Our repository includes a custom interface extension called "Link with Favicon". This interface extension saves both a link and a favicon url. It also allows you to generate a favicon url from a link. And displays a preview of the favicon for users to check.
+Our repository includes a custom interface extension called "Favicon Link". This interface extension lets you save a favicon link and display a preview of the favicon. It also allows you to generate a favicon url based on a related field containing a URL.
