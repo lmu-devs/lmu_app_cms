@@ -1,3 +1,12 @@
+<!--
+  This Vue component serves as the custom interface for the 'Link with Favicon' Directus extension.
+  Its primary responsibilities are:
+  1. Receiving the name of a "related field" from the interface options (props.selectedFieldName).
+  2. Accessing the complete data of the current item being edited in the Directus form (via inject('values')).
+  3. Extracting the actual field name to use (handling potential template syntax like {{field_name}}).
+  4. Displaying the name of this selected related field.
+  5. Retrieving and displaying the content (value) of that related field from the current item's data.
+-->
 <template>
   <div class="simple-interface-display">
     <v-notice v-if="!hasSelectedField" type="info" icon="info">
@@ -25,57 +34,55 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch, inject, Ref } from "vue";
+import { computed, inject, Ref } from "vue";
 
 const props = defineProps<{
-  value: string | Record<string, any> | null; // Value of the field this interface is for
-  values?: Record<string, any> | null;      // All values of the current item in the form (prop fallback)
-  options?: Record<string, any> | null;    // For any other general options
+  /** The name of the current collection being edited. */
   collection?: string;
-  selectedFieldName?: string;            // Name of the related field to get content from
+  /** 
+   * The name of the related field (whose content we want to use to generate a favicon url).
+   * This is configured in the interface options (index.ts) and passed as a prop.
+   */
+  selectedFieldName?: string;
 }>();
 
+/**
+ * Injects the 'values' object from the parent Directus form context.
+ * This object contains all the field values of the current item being edited.
+ * It can be a Vue Ref or a plain object, so a computed property `currentItemValues` handles this.
+ * 
+ * @see https://github.com/directus/directus/discussions/16603
+ */
 const injectedValues = inject<Ref<Record<string, any> | null> | Record<string, any> | null>('values', null);
 
+/**
+ * A computed property that provides access to the current item's data from injected values.
+ * This ensures reactivity if the item data changes.
+ */
 const currentItemValues = computed(() => {
   if (injectedValues && typeof (injectedValues as Ref).value !== 'undefined') {
-    return (injectedValues as Ref<Record<string, any> | null>).value;
+    return (injectedValues as Ref<Record<string, any> | null>).value; // Access .value if it's a Ref
   }
-  if (injectedValues && typeof injectedValues === 'object' && !('value' in injectedValues)){
-    return injectedValues as Record<string, any> | null;
+  if (injectedValues && typeof injectedValues === 'object' && !('value' in injectedValues)) {
+    return injectedValues as Record<string, any> | null; // Use directly if it's a plain object
   }
-  return props.values;
+  return null;
 });
 
-console.log('[interface.vue] Instance created. Initial selectedFieldName:', props.selectedFieldName);
-
-onMounted(() => {
-  console.log('[interface.vue] Component mounted. Collection:', props.collection);
-  console.log('[interface.vue] Initial value (this fields value):', props.value);
-  console.log('[interface.vue] Resolved item values at mount:', currentItemValues.value);
-  console.log('[interface.vue] Received selectedFieldName from props:', props.selectedFieldName);
-});
-
-watch(() => props.selectedFieldName, (newFieldName, oldFieldName) => {
-  console.log(`[interface.vue] selectedFieldName prop changed from "${oldFieldName}" to "${newFieldName}"`);
-});
-
-watch(currentItemValues, (newValues, oldValues) => {
-  let logMessage = '[interface.vue] currentItemValues changed.';
-  if (newValues && oldValues) {
-    logMessage += ` Keys: ${Object.keys(newValues).join(', ')}`;
-  } else if (newValues) {
-    logMessage += ` Now has keys: ${Object.keys(newValues).join(', ')}`;
-  } else {
-    logMessage += ' Now null or undefined.';
-  }
-  // console.log(logMessage); // Commenting out due to persistent linter issues on this line
-}, { deep: true });
-
+/**
+ * Computed property to check if a related field has been selected in the options.
+ */
 const hasSelectedField = computed(() => {
   return !!props.selectedFieldName;
 });
 
+/**
+ * Helper function to extract the actual field name if `selectedFieldName` is provided
+ * in a template syntax (e.g., "{{actual_field_name}}").
+ * If no template syntax is found, it returns the input string as is.
+ * @param {string} templateOrFieldName - The field name string, possibly with template syntax.
+ * @returns {string} The extracted field name or the original string.
+ */
 function extractActualFieldName(templateOrFieldName: string): string {
   if (typeof templateOrFieldName !== 'string') {
     return '';
@@ -84,6 +91,11 @@ function extractActualFieldName(templateOrFieldName: string): string {
   return match && match[1] ? match[1] : templateOrFieldName;
 }
 
+/**
+ * Computed property that provides the processed name of the selected related field,
+ * after extracting it from any potential template syntax.
+ * This is what's displayed to the user as "Selected Related Field".
+ */
 const selectedFieldNameDisplay = computed(() => {
   if (props.selectedFieldName && typeof props.selectedFieldName === 'string') {
     return extractActualFieldName(props.selectedFieldName);
@@ -91,15 +103,20 @@ const selectedFieldNameDisplay = computed(() => {
   return null;
 });
 
+/**
+ * Computed property that retrieves the content (value) of the `selectedFieldNameDisplay`
+ * from the `currentItemValues` (the data of the item being edited).
+ * This is the core logic for displaying the related field's content.
+ */
 const relatedFieldContent = computed(() => {
   const itemData = currentItemValues.value;
   if (itemData && selectedFieldNameDisplay.value) {
-    const fieldKey = selectedFieldNameDisplay.value;
+    const fieldKey = selectedFieldNameDisplay.value; // The actual key to look up in itemData
     if (Object.prototype.hasOwnProperty.call(itemData, fieldKey)) {
       const content = itemData[fieldKey];
-      // console.log(`[interface.vue] Content for field "${fieldKey}":`, content); // Can be verbose
       return content;
     }
+    // Warn if the specified field key doesn't exist in the item's data
     console.warn(`[interface.vue] Field key "${fieldKey}" not found in itemData. Available keys:`, Object.keys(itemData));
     return null;
   }
@@ -109,6 +126,7 @@ const relatedFieldContent = computed(() => {
 </script>
 
 <style scoped>
+/* Styles for the interface display wrapper */
 .simple-interface-display {
   padding: 10px;
   border: 1px solid #eee;
@@ -116,10 +134,12 @@ const relatedFieldContent = computed(() => {
   font-family: sans-serif;
 }
 
+/* Basic paragraph styling */
 .simple-interface-display p {
   margin: 5px 0;
 }
 
+/* Styling for preformatted text, used to display the related field's content */
 .simple-interface-display pre {
   white-space: pre-wrap;       /* CSS3 */
   white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
@@ -131,6 +151,7 @@ const relatedFieldContent = computed(() => {
   border-radius: 4px;
 }
 
+/* Styling for strong text elements */
 strong {
   color: var(--theme--text);
 }
