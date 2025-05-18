@@ -10,17 +10,20 @@ Content Management System for the LMU App, powered by [Directus](https://directu
 ## Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/lmu-devs/lmu_app_cms.git
 cd lmu_app_cms
 ```
 
 2. Create your environment file:
+
 ```bash
 cp .env.example .env
 ```
 
 3. Start the CMS:
+
 ```bash
 docker-compose -f docker-compose.directus.yml up -d
 ```
