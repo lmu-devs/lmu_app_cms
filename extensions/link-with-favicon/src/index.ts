@@ -1,12 +1,12 @@
 import InterfaceComponent from './interface.vue'
 
 export default {
-    id: 'link-with-favicon',
-    name: 'Link with Favicon',
+    id: 'favicon-extension',
+    name: 'Favicon Link',
     icon: 'link',
-    description: 'A link field with favicon support and displays related field content.',
+    description: 'A Favicon Link field that generates a favicon from a related field containing a URL.',
     component: InterfaceComponent,
-    types: ['json'],
+    types: ['string'],
     group: 'standard',
     /**
      * A function that defines the configuration options available for this interface.

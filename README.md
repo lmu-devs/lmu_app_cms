@@ -51,4 +51,4 @@ When developing extensions, you can utilize Directus' comprehensive UI component
 
 #### Link with Favicon Interface
 
-Our repository includes a custom interface extension called "Link with Favicon". This interface extension saves both a link and a favicon url. It also allows you to generate a favicon url from a link. And displays a preview of the favicon for users to check.
+Our repository includes a custom interface extension called "Favicon Link". This interface extension lets you save a favicon link and display a preview of the favicon. It also allows you to generate a favicon url based on a related field containing a URL.
