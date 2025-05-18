@@ -1,8 +1,8 @@
 {
-	"name": "link-with-favicon",
-	"description": "Please enter a description for your extension",
+	"name": "favicon-from-url",
+	"description": "Generate a favicon from a URL",
 	"icon": "extension",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"keywords": [
 		"directus",
 		"directus-extension",
