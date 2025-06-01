@@ -11,6 +11,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_HOST: ${POSTGRES_HOST}
+    ports:
+      - 5433:${POSTGRES_PORT} # External:Internal
     healthcheck:
       test:
         [
