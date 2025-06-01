@@ -2,10 +2,10 @@ import InterfaceComponent from "./interface.vue";
 
 export default {
   id: "favicon-extension",
-  name: "Favicon Link",
+  name: "Favicon URL",
   icon: "link",
   description:
-    "A Favicon Link field that generates a favicon from a related field containing a URL.",
+    "A Favicon URL field that generates a favicon from a related field containing a URL.",
   component: InterfaceComponent,
   types: ["string"],
   group: "standard",

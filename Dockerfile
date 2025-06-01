@@ -13,7 +13,9 @@ RUN chown -R node:node /directus/extensions
 
 # Switch to node user and build extensions
 USER node
-WORKDIR /directus/extensions/link-with-favicon
+
+# Install and build favicon-from-url extension
+WORKDIR /directus/extensions/favicon-from-url
 RUN npm install && npx @directus/extensions-sdk build
 
 # Set back to the main directory
