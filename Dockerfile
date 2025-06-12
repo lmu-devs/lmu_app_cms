@@ -1,4 +1,4 @@
-FROM directus/directus:11.7.2
+FROM directus/directus:11.8.0
 
 # Set environment variables
 ARG BUILD_ENV=production

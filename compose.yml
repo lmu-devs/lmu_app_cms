@@ -30,6 +30,7 @@ services:
     networks:
       - backend
       - frontend
+      - shared
 
   cache:
     image: redis:6
@@ -111,7 +112,7 @@ services:
   # Development environment (used by default)
   directus_dev:
     extends: directus_base
-    image: directus/directus:11.7.2
+    image: directus/directus:11.8.0
     container_name: directus_dev
     user: root
     volumes:
