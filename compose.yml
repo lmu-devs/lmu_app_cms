@@ -45,19 +45,21 @@ services:
       start_interval: 5s
       start_period: 30s
 
-  # Base directus service (not used directly)
-  directus_base:
-    image: ${DOCKER_USERNAME}/lmu-app-cms:${ENVIRONMENT}
+  # Directus service with custom extensions
+  directus:
+    image: ${DOCKER_USERNAME}/lmu-app-cms:${ENVIRONMENT:-latest}
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        BUILD_ENV: ${ENVIRONMENT:-development}
+        BUILD_ENV: ${ENVIRONMENT:-production}
         BUILD_DATE: ${BUILD_DATE:-local}
+    container_name: directus_${ENVIRONMENT:-dev}
     ports:
       - 8055:8055
     volumes:
       - ./uploads:/directus/uploads
+      - ./data/directus:/directus/data
     environment:
       # Database Config
       DB_CLIENT: "pg"
@@ -86,11 +88,11 @@ services:
       EMAIL_SMTP_NAME: ${EMAIL_SMTP_NAME}
       EMAIL_SMTP_POOL: ${EMAIL_SMTP_POOL}
 
-      # could be nice in future
+      # Features
       WEBSOCKETS_ENABLED: "true"
       GRAPHQL_INTROSPECTION: "true"
 
-      # Cache Config (using memory for simplicity)
+      # Cache Config
       CACHE_ENABLED: "true"
       CACHE_AUTO_PURGE: "true"
       CACHE_STORE: "redis"
@@ -108,24 +110,6 @@ services:
       - backend
       - frontend
       - shared
-
-  # Development environment (used by default)
-  directus_dev:
-    extends: directus_base
-    image: directus/directus:11.8.0
-    container_name: directus_dev
-    user: root
-    volumes:
-      - ./uploads:/directus/uploads
-      - ./extensions:/directus/extensions
-      - ./data/directus:/directus/data
-
-  # Staging/Production environment (used when ENVIRONMENT=staging or ENVIRONMENT=production)
-  directus:
-    extends: directus_base
-    profiles: ["staging", "production"]
-    container_name: directus
-    # No need to override image as it will use the built one from directus_base
 
 networks:
   backend:

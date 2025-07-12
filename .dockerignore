@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+*.md
+
+# Environment files
+.env*
+
+# Data directories (we don't want to copy these into the image)
+data/
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker files
+docker-compose*.yml
+compose*.yml
+Dockerfile*
+
+# CI/CD
+.github/ 
