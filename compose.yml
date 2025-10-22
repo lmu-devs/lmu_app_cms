@@ -105,7 +105,7 @@ services:
         condition: service_healthy
       cache:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
     networks:
       - backend
       - frontend

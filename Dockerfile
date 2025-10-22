@@ -17,7 +17,7 @@ WORKDIR /extensions/link-with-favicon
 RUN npm install && npx @directus/extensions-sdk build
 
 # Stage 3: Final image
-FROM directus/directus:11.10.0
+FROM directus/directus:11.12.0
 
 # Set environment variables
 ARG BUILD_ENV=production
